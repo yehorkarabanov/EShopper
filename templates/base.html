@@ -116,7 +116,7 @@
                     {#                        <a href="" class="nav-item nav-link">Jackets</a>#}
                     {#                        <a href="" class="nav-item nav-link">Shoes</a>#}
                     {#TODO: redo links#}
-                    {% for category in categories %}
+                    {% for category in categories|slice:':8' %}
                         <a href="" class="nav-item nav-link">{{ category }}</a>
                     {% endfor %}
 
