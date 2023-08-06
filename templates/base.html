@@ -95,7 +95,7 @@
 
 
 <!-- Navbar Start -->
-<div class="container-fluid mb-5">
+<div class="container-fluid {% if page == 'home' %}mb-5{% endif %}">
     <div class="row border-top px-xl-5">
         <div class="col-lg-3 d-none d-lg-block">
             <a class="btn shadow-none d-flex align-items-center justify-content-between bg-primary text-white w-100"
@@ -103,23 +103,12 @@
                 <h6 class="m-0">Categories</h6>
                 <i class="fa fa-angle-down text-dark"></i>
             </a>
-            <nav class="collapse {% if page == 'home' %}show{% endif %} navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0"
-                 id="navbar-vertical">
-                <div class="navbar-nav w-100 overflow-hidden" style="height: 410px">
-                    {#                        <a href="" class="nav-item nav-link">Shirts</a>#}
-                    {#                        <a href="" class="nav-item nav-link">Jeans</a>#}
-                    {#                        <a href="" class="nav-item nav-link">Swimwear</a>#}
-                    {#                        <a href="" class="nav-item nav-link">Sleepwear</a>#}
-                    {#                        <a href="" class="nav-item nav-link">Sportswear</a>#}
-                    {#                        <a href="" class="nav-item nav-link">Jumpsuits</a>#}
-                    {#                        <a href="" class="nav-item nav-link">Blazers</a>#}
-                    {#                        <a href="" class="nav-item nav-link">Jackets</a>#}
-                    {#                        <a href="" class="nav-item nav-link">Shoes</a>#}
-                    {#TODO: redo links#}
+            <nav class="collapse {% if page == 'home' %}show{% else %}position-absolute bg-light{% endif %} navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0"
+                 id="navbar-vertical" {% if page != 'home' %}style="width: calc(100% - 30px); z-index: 1;"{% endif %}>
+                <div class="navbar-nav w-100 overflow-hidden" style="height: calc(40.8 * {{ categories.count }})px">
                     {% for category in categories|slice:':8' %}
-                        <a href="" class="nav-item nav-link">{{ category }}</a>
+                        <a href="{{ category.get_absolute_url }}" class="nav-item nav-link">{{ category }}</a>
                     {% endfor %}
-
                 </div>
             </nav>
         </div>
@@ -135,13 +124,15 @@
                 <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                     <div class="navbar-nav mr-auto py-0">
                         {#TODO: redo links#}
-                        <a href="index.html" class="nav-item nav-link {% if page == 'home' %}active{% endif %}">Home</a>
-                        <a href="shop.html" class="nav-item nav-link {% if page == 'shop' %}active{% endif %}">Shop</a>
-                        <a href="contact.html" class="nav-item nav-link {% if page == 'contact' %}active{% endif %}">Contact</a>
+                        <a href="{% url 'shop:home' %}"
+                           class="nav-item nav-link {% if page == 'home' %}active{% endif %}">Home</a>
+                        <a href="{% url 'shop:products_list' %}"
+                           class="nav-item nav-link {% if 'shop/' in request.path %}active{% endif %}">Shop</a>
+                        <a href="contact.html" class="nav-item nav-link {% if 'contact/' in request.path %}active{% endif %}">Contact</a>
                     </div>
                     <div class="navbar-nav ml-auto py-0">
-                        <a href="" class="nav-item nav-link {% if page == 'login' %}active{% endif %}">Login</a>
-                        <a href="" class="nav-item nav-link {% if page == 'register' %}active{% endif %}">Register</a>
+                        <a href="" class="nav-item nav-link {% if 'login/' in request.path %}active{% endif %}">Login</a>
+                        <a href="" class="nav-item nav-link {% if 'register/' in request.path %}active{% endif %}">Register</a>
                     </div>
                 </div>
             </nav>

@@ -41,9 +41,8 @@
                 <div class="col-lg-4 col-md-6 pb-1">
                     <div class="cat-item d-flex flex-column border mb-4" style="padding: 30px;">
                         {#TODO: do amount of proudcts#}
-                        {#TODO: do links to categories#}
                         <p class="text-right">15 Products</p>
-                        <a href="" class="cat-img position-relative overflow-hidden mb-3">
+                        <a href="{{ category.get_absolute_url }}" class="cat-img position-relative overflow-hidden mb-3">
                             <img class="img-fluid" src="{{ category.image.url }}" alt="">
                         </a>
                         <h5 class="font-weight-semi-bold m-0">{{ category }}</h5>
