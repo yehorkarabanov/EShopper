@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Category, Product
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 
 
 def home(request):
@@ -27,4 +27,17 @@ class ProductsListView(ListView):
         context = super().get_context_data(**kwargs)
         categories = Category.objects.all()
         context['categories'] = categories
+        return context
+
+
+class ProductDetailView(DetailView):
+    model = Product
+    template_name = 'shop/detail.html'
+    slug_url_kwarg = 'product_slug'
+    context_object_name = 'product'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        context['recommended_products'] = Product.objects.all()[:5]
         return context

@@ -42,7 +42,8 @@
                     <div class="cat-item d-flex flex-column border mb-4" style="padding: 30px;">
                         {#TODO: do amount of proudcts#}
                         <p class="text-right">15 Products</p>
-                        <a href="{{ category.get_absolute_url }}" class="cat-img position-relative overflow-hidden mb-3">
+                        <a href="{{ category.get_absolute_url }}"
+                           class="cat-img position-relative overflow-hidden mb-3">
                             <img class="img-fluid" src="{{ category.image.url }}" alt="">
                         </a>
                         <h5 class="font-weight-semi-bold m-0">{{ category }}</h5>
@@ -106,7 +107,8 @@
                             </div>
                         </div>
                         <div class="card-footer d-flex justify-content-between bg-light border">
-                            <a href="" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>View
+                            <a href="{{ product.get_absolute_url }}" class="btn btn-sm text-dark p-0"><i
+                                    class="fas fa-eye text-primary mr-1"></i>View
                                 Detail</a>
                             <a href="" class="btn btn-sm text-dark p-0"><i
                                     class="fas fa-shopping-cart text-primary mr-1"></i>Add
@@ -167,7 +169,8 @@
                             </div>
                         </div>
                         <div class="card-footer d-flex justify-content-between bg-light border">
-                            <a href="" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>View
+                            <a href="{{ product.get_absolute_url }}" class="btn btn-sm text-dark p-0"><i
+                                    class="fas fa-eye text-primary mr-1"></i>View
                                 Detail</a>
                             <a href="" class="btn btn-sm text-dark p-0"><i
                                     class="fas fa-shopping-cart text-primary mr-1"></i>Add
