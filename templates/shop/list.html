@@ -60,7 +60,7 @@
                 <!-- Color Start -->
                 <div class="border-bottom mb-4 pb-4">
                     <h5 class="font-weight-semi-bold mb-4">Filter by color</h5>
-                    <form>
+                    <form id="color_form">
                         {% for color in colors %}
                             <div class="custom-control custom-checkbox d-flex align-items-center
                             justify-content-between {% if not forloop.last %}mb-3{% endif %}">
@@ -76,7 +76,7 @@
                 <!-- Size Start -->
                 <div class="mb-5">
                     <h5 class="font-weight-semi-bold mb-4">Filter by size</h5>
-                    <form>
+                    <form id="size_form">
                         {% for size in sizes %}
                             <div class="custom-control custom-checkbox d-flex align-items-center
                             justify-content-between {% if not forloop.last %}mb-3{% endif %}">
@@ -193,30 +193,70 @@
         </div>
     </div>
     <!-- Shop End -->
-    <button onclick="addParameters(['param1=value1'])">Add Param 1</button>
-    <button onclick="addParameters(['param2=value2'])">Add Param 2</button>
-    <button onclick="addParameters(['param1=value1', 'param2=value2'])">Add Both Params
-    </button>
+{% endblock %}
+
+{% block script %}
     <script>
         function addGETParams(paramArray) {
-            var url = new URL(window.location.href);
-            var queryParams = new URLSearchParams(url.search);
+            let url = new URL(window.location.href);
+            let queryParams = new URLSearchParams(url.search);
 
-            for (var i = 0; i < paramArray.length; i++) {
-                var param = paramArray[i].split('=');
-                if (queryParams.has(param[0])) {
-                    queryParams.set(param[0], param[1]);
+            for (let i = 0; i < paramArray.length; i++) {
+                let param = paramArray[i].split('=');
+                if (param[1].length !== 0) {
+                    if (queryParams.has(param[0])) {
+                        queryParams.set(param[0], param[1]);
+                    } else {
+                        queryParams.append(param[0], param[1]);
+                    }
                 } else {
-                    queryParams.append(param[0], param[1]);
+                    queryParams.delete(param[0]);
                 }
             }
 
             url.search = queryParams.toString();
 
-            window.location.href = url;
+            {#window.location.href = url;#}
+            window.history.replaceState(null, null, url);
         }
-    </script>
-{% endblock %}
 
-{% block script %}
+        function getDataFromForm(type) {
+            $('#' + type + '_form').on('change', function () {
+                let checkedValues = []; // Array to store checked checkbox values
+
+                // Find the checkboxes within the specific form that triggered the event
+                $(this).find('.custom-control-input:checked').each(function () {
+                    let label = $(this).siblings('.custom-control-label').text();
+                    checkedValues.push(label);
+                });
+
+                addGETParams([type + '=' + checkedValues.join('_')]);
+            });
+        }
+
+        function setCheckedForm(type) {
+            let url = new URL(window.location.href);
+            let queryParams = new URLSearchParams(url.search);
+
+            if (queryParams.get(type)) {
+                let data = queryParams.get(type).split('_');
+
+                $('#' + type + '_form').find('.custom-control-input').each(function () {
+                    let label = $(this).siblings('.custom-control-label').text();
+
+                    if (data.includes(label)) {
+                        $(this).prop('checked', true);
+                    }
+                });
+            }
+        }
+
+        $(document).ready(function () {
+            getDataFromForm('size');
+            getDataFromForm('color');
+            setCheckedForm('size');
+            setCheckedForm('color');
+
+        });
+    </script>
 {% endblock %}
