@@ -21,8 +21,20 @@ class ProductsListView(ListView):
         category_slug = self.kwargs.get('categoty_slug')
         if category_slug:
             category = get_object_or_404(Category, slug=category_slug)
-            return Product.objects.filter(category=category)
-        return super().get_queryset()
+            queryset = Product.objects.filter(category=category)
+        else:
+            queryset = super().get_queryset()
+
+        order_by = self.request.GET.get('order_by')
+        if order_by:
+            if order_by == 'latest':
+                queryset = queryset.order_by('-created')
+            if order_by == 'cheap':
+                queryset = queryset.order_by('price')
+            if order_by == 'expansive':
+                queryset = queryset.order_by('-price')
+
+        return queryset
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
