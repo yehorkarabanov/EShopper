@@ -216,8 +216,8 @@
 
             url.search = queryParams.toString();
 
-            {#window.location.href = url;#}
-            window.history.replaceState(null, null, url);
+            window.location.href = url;
+            {#window.history.replaceState(null, null, url);#}
         }
 
         function getDataFromForm(type) {

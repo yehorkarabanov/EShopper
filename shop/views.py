@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Category, Product, ProductColor, ProductSize
 from django.views.generic import ListView, DetailView
+from django.db.models import Q
 
 
 def home(request):
@@ -15,7 +16,7 @@ class ProductsListView(ListView):
     model = Product
     template_name = 'shop/list.html'
     queryset = Product.objects.all()
-    paginate_by = 3
+    paginate_by = 30
 
     def get_queryset(self):
         category_slug = self.kwargs.get('categoty_slug')
@@ -33,6 +34,33 @@ class ProductsListView(ListView):
                 queryset = queryset.order_by('price')
             if order_by == 'expansive':
                 queryset = queryset.order_by('-price')
+
+        # size_name = self.request.GET.get('size')
+        # if size_name:
+        #     queryset = queryset.filter(size__size__in=size_name.split('_'))
+        #
+        # color_name = self.request.GET.get('color')
+        # if color_name:
+        #     queryset = queryset.filter(color__color__in=color_name.split('_'))
+        size_name = self.request.GET.get('size')
+        color_name = self.request.GET.get('color')
+
+        size_name = self.request.GET.get('size')
+        color_name = self.request.GET.get('color')
+
+        if size_name and color_name:
+            size_names = size_name.split('_')
+            color_names = color_name.split('_')
+
+            queryset = queryset.filter(
+                Q(size__size__in=size_names) & Q(color__color__in=color_names)
+            )
+        elif size_name:
+            size_names = size_name.split('_')
+            queryset = queryset.filter(size__size__in=size_names)
+        elif color_name:
+            color_names = color_name.split('_')
+            queryset = queryset.filter(color__color__in=color_names)
 
         return queryset
 
