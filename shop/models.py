@@ -22,6 +22,20 @@ class Category(models.Model):
         return reverse('shop:products_list_by_category', args=[self.slug])
 
 
+class ProductSize(models.Model):
+    size = models.CharField(max_length=101)
+
+    def __str__(self):
+        return self.size
+
+
+class ProductColor(models.Model):
+    color = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.color
+
+
 class Product(models.Model):
     name = models.CharField(max_length=200)
     slug = models.SlugField(max_length=200)
@@ -32,6 +46,8 @@ class Product(models.Model):
     available = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    size = models.ManyToManyField(ProductSize, related_name='products')
+    color = models.ManyToManyField(ProductColor, related_name='products')
 
     class Meta:
         ordering = ['name']

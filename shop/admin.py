@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Product, ProductPhoto
+from .models import Category, Product, ProductPhoto, ProductColor, ProductSize
 
 
 @admin.register(Category)
@@ -23,3 +23,19 @@ class ProductAdmin(admin.ModelAdmin):
 
     def get_prepopulated_fields(self, request, obj=None):
         return {'slug': ('name',)}
+
+
+@admin.register(ProductSize)
+class ProductSizeAdmin(admin.ModelAdmin):
+    list_display = ['size', 'product_count']
+
+    def product_count(self, obj):
+        return obj.products.count()
+
+
+@admin.register(ProductColor)
+class ProductColorAdmin(admin.ModelAdmin):
+    list_display = ['color', 'product_count']
+
+    def product_count(self, obj):
+        return obj.products.count()

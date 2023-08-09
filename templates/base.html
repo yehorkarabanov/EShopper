@@ -128,10 +128,12 @@
                            class="nav-item nav-link {% if page == 'home' %}active{% endif %}">Home</a>
                         <a href="{% url 'shop:products_list' %}"
                            class="nav-item nav-link {% if 'shop/' in request.path %}active{% endif %}">Shop</a>
-                        <a href="contact.html" class="nav-item nav-link {% if 'contact/' in request.path %}active{% endif %}">Contact</a>
+                        <a href="contact.html"
+                           class="nav-item nav-link {% if 'contact/' in request.path %}active{% endif %}">Contact</a>
                     </div>
                     <div class="navbar-nav ml-auto py-0">
-                        <a href="" class="nav-item nav-link {% if 'login/' in request.path %}active{% endif %}">Login</a>
+                        <a href=""
+                           class="nav-item nav-link {% if 'login/' in request.path %}active{% endif %}">Login</a>
                         <a href="" class="nav-item nav-link {% if 'register/' in request.path %}active{% endif %}">Register</a>
                     </div>
                 </div>
@@ -274,6 +276,8 @@
 
 <!-- Template Javascript -->
 <script src="{% static 'js/main.js' %}"></script>
+{% block script %}
+{% endblock %}
 </body>
 
 </html>

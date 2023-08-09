@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Category, Product
+from .models import Category, Product, ProductColor, ProductSize
 from django.views.generic import ListView, DetailView
 
 
@@ -15,7 +15,7 @@ class ProductsListView(ListView):
     model = Product
     template_name = 'shop/list.html'
     queryset = Product.objects.all()
-    paginate_by = 1
+    paginate_by = 3
 
     def get_queryset(self):
         category_slug = self.kwargs.get('categoty_slug')
@@ -28,6 +28,10 @@ class ProductsListView(ListView):
         context = super().get_context_data(**kwargs)
         categories = Category.objects.all()
         context['categories'] = categories
+        colors = ProductColor.objects.all()
+        context['colors'] = colors
+        sizes = ProductSize.objects.all()
+        context['sizes'] = sizes
         return context
 
 
@@ -36,7 +40,7 @@ class ProductDetailView(DetailView):
     template_name = 'shop/detail.html'
     slug_url_kwarg = 'product_slug'
     context_object_name = 'product'
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
