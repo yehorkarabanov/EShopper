@@ -106,7 +106,7 @@
             <nav class="collapse {% if page == 'home' %}show{% else %}position-absolute bg-light{% endif %} navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0"
                  id="navbar-vertical" {% if page != 'home' %}style="width: calc(100% - 30px); z-index: 1;"{% endif %}>
                 <div class="navbar-nav w-100 overflow-hidden" style="height: calc(40.8 * {{ categories.count }})px">
-                    {% for category in categories|slice:':8' %}
+                    {% for category in categories|slice:':10' %}
                         <a href="{{ category.get_absolute_url }}" class="nav-item nav-link">{{ category }}</a>
                     {% endfor %}
                 </div>

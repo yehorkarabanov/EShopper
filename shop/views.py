@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Category, Product, ProductColor, ProductSize
 from django.views.generic import ListView, DetailView
-from django.db.models import Q
+from django.db.models import Q, Count
 
 
 def home(request):
@@ -16,13 +16,12 @@ class ProductsListView(ListView):
     model = Product
     template_name = 'shop/list.html'
     queryset = Product.objects.all()
-    paginate_by = 30
+    paginate_by = 3
 
     def get_queryset(self):
-        category_slug = self.kwargs.get('categoty_slug')
+        category_slug = self.kwargs.get('category_slug')
         if category_slug:
-            category = get_object_or_404(Category, slug=category_slug)
-            queryset = Product.objects.filter(category=category)
+            queryset = Product.objects.filter(category__slug=category_slug)
         else:
             queryset = super().get_queryset()
 
@@ -58,9 +57,18 @@ class ProductsListView(ListView):
         context = super().get_context_data(**kwargs)
         categories = Category.objects.all()
         context['categories'] = categories
-        colors = ProductColor.objects.all()
+
+        category_slug = self.kwargs.get('category_slug')
+        if category_slug:
+            colors = ProductColor.objects.annotate(
+                count=Count('products', filter=Q(products__category__slug=category_slug)))
+            sizes = ProductSize.objects.annotate(
+                count=Count('products', filter=Q(products__category__slug=category_slug)))
+        else:
+            colors = ProductColor.objects.annotate(count=Count('products'))
+            sizes = ProductSize.objects.annotate(count=Count('products'))
+
         context['colors'] = colors
-        sizes = ProductSize.objects.all()
         context['sizes'] = sizes
         return context
 

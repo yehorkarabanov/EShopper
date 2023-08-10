@@ -66,7 +66,7 @@
                             justify-content-between {% if not forloop.last %}mb-3{% endif %}">
                                 <input type="checkbox" class="custom-control-input" id="color-{{ color }}">
                                 <label class="custom-control-label" for="color-{{ color }}">{{ color }}</label>
-                                <span class="badge border font-weight-normal">{{ color.products.count }}</span>
+                                <span class="badge border font-weight-normal">{{ color.count }}</span>
                             </div>
                         {% endfor %}
                     </form>
@@ -82,7 +82,7 @@
                             justify-content-between {% if not forloop.last %}mb-3{% endif %}">
                                 <input type="checkbox" class="custom-control-input" id="color-{{ size }}">
                                 <label class="custom-control-label" for="color-{{ size }}">{{ size }}</label>
-                                <span class="badge border font-weight-normal">{{ size.products.count }}</span>
+                                <span class="badge border font-weight-normal">{{ size.count }}</span>
                             </div>
                         {% endfor %}
                     </form>
@@ -108,12 +108,12 @@
                                 </div>
                             </form>
                             <div class="dropdown ml-4">
-                                <button class="btn border dropdown-toggle" type="button" id="triggerId"
+                                <button class="btn border dropdown-toggle" type="button" id="order_by_id"
                                         data-toggle="dropdown" aria-haspopup="true"
                                         aria-expanded="false">
                                     Order by
                                 </button>
-                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="triggerId">
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="order_by_id">
                                     <a class="dropdown-item" onclick="addGETParams(['order_by=latest'])">Latest</a>
                                     <a class="dropdown-item" onclick="addGETParams(['order_by=cheap'])">Cheapest</a>
                                     <a class="dropdown-item" onclick="addGETParams(['order_by=expansive'])">Most
@@ -158,15 +158,15 @@
                         <div class="col-12 pb-1">
                             <nav aria-label="Page navigation">
                                 <ul class="pagination justify-content-center mb-3">
-                                    {% if page_obj.has_previous %}
-                                        <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
-                                            <a class="page-link" aria-label="Previous"
-                                               onclick="addGETParams(['page={{ page_obj.previous_page_number }}'])">
-                                                <span aria-hidden="true">&laquo;</span>
-                                                <span class="sr-only">Previous</span>
-                                            </a>
-                                        </li>
-                                    {% endif %}
+                                    <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+                                        <a class="page-link" aria-label="Previous"
+                                                {% if page_obj.has_previous %}
+                                           onclick="addGETParams(['page={{ page_obj.previous_page_number }}'])"
+                                                {% endif %}>
+                                            <span aria-hidden="true">&laquo;</span>
+                                            <span class="sr-only">Previous</span>
+                                        </a>
+                                    </li>
 
                                     {% for page in paginator.page_range %}
                                         <li class="page-item {% if page_obj.number == page %}active{% endif %}"><a
@@ -174,15 +174,15 @@
                                                 onclick="addGETParams(['page={{ page }}'])">{{ page }}</a></li>
                                     {% endfor %}
 
-                                    {% if page_obj.has_next %}
-                                        <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
-                                            <a class="page-link" aria-label="Next"
-                                               onclick="addGETParams(['page={{ page_obj.next_page_number }}'])">
-                                                <span aria-hidden="true">&raquo;</span>
-                                                <span class="sr-only">Next</span>
-                                            </a>
-                                        </li>
-                                    {% endif %}
+                                    <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+                                        <a class="page-link" aria-label="Next"
+                                                {% if page_obj.has_next %}
+                                           onclick="addGETParams(['page={{ page_obj.next_page_number }}'])"
+                                                {% endif %}>
+                                            <span aria-hidden="true">&raquo;</span>
+                                            <span class="sr-only">Next</span>
+                                        </a>
+                                    </li>
                                 </ul>
                             </nav>
                         </div>
@@ -251,11 +251,29 @@
             }
         }
 
+        function setOrderByForm() {
+            let url = new URL(window.location.href);
+            let queryParams = new URLSearchParams(url.search);
+            if (queryParams.get('order_by')) {
+                let button = $('#order_by_id');
+                if (queryParams.get('order_by') === 'latest') {
+                    button.html('Latest');
+                }
+                if (queryParams.get('order_by') === 'cheap') {
+                    button.html('Cheapest');
+                }
+                if (queryParams.get('order_by') === 'expansive') {
+                    button.html('Most expansive');
+                }
+            }
+        }
+
         $(document).ready(function () {
             getDataFromForm('size');
             getDataFromForm('color');
             setCheckedForm('size');
             setCheckedForm('color');
+            setOrderByForm();
 
         });
     </script>
