@@ -1,7 +1,9 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, HttpResponse
 from .models import Category, Product, ProductColor, ProductSize
 from django.views.generic import ListView, DetailView
 from django.db.models import Q, Count
+from django.template.loader import render_to_string
+from utils.ajax import is_ajax
 
 
 def home(request):
@@ -67,10 +69,15 @@ class ProductsListView(ListView):
         else:
             colors = ProductColor.objects.annotate(count=Count('products'))
             sizes = ProductSize.objects.annotate(count=Count('products'))
-
         context['colors'] = colors
         context['sizes'] = sizes
+
         return context
+
+    def render_to_response(self, context, **response_kwargs):
+        if is_ajax(self.request):
+            return HttpResponse(render_to_string('shop/frames/product_list_frame.html', context))
+        return super().render_to_response(context, **response_kwargs)
 
 
 class ProductDetailView(DetailView):
