@@ -1,3 +1,5 @@
+{% load paginator_tags %}
+{% get_proper_elided_page_range paginator page_obj.number as page_range %}
 {% if is_paginated %}
     <div class="col-12 pb-1" id="product_paginator">
         <nav aria-label="Page navigation">
@@ -12,10 +14,15 @@
                     </a>
                 </li>
 
-                {% for page in paginator.page_range %}
-                    <li class="page-item {% if page_obj.number == page %}active{% endif %}"><a
-                            class="page-link"
-                            onclick="addGETParams(['page={{ page }}'])">{{ page }}</a></li>
+                {% for page in page_range %}
+                    {% if page == paginator.ELLIPSIS %}
+                        <li class="page-item disabled"><a
+                                class="page-link">{{ paginator.ELLIPSIS }}</a></li>
+                    {% else %}
+                        <li class="page-item {% if page_obj.number == page %}active{% endif %}"><a
+                                class="page-link"
+                                onclick="addGETParams(['page={{ page }}'])">{{ page }}</a></li>
+                    {% endif %}
                 {% endfor %}
 
                 <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
