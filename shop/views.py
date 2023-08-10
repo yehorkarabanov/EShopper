@@ -35,16 +35,6 @@ class ProductsListView(ListView):
             if order_by == 'expansive':
                 queryset = queryset.order_by('-price')
 
-        # size_name = self.request.GET.get('size')
-        # if size_name:
-        #     queryset = queryset.filter(size__size__in=size_name.split('_'))
-        #
-        # color_name = self.request.GET.get('color')
-        # if color_name:
-        #     queryset = queryset.filter(color__color__in=color_name.split('_'))
-        size_name = self.request.GET.get('size')
-        color_name = self.request.GET.get('color')
-
         size_name = self.request.GET.get('size')
         color_name = self.request.GET.get('color')
 
