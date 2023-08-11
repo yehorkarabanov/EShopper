@@ -16,8 +16,10 @@
             <div class="card-footer d-flex justify-content-between bg-light border">
                 <a href="{{ product.get_absolute_url }}" class="btn btn-sm text-dark p-0"><i
                         class="fas fa-eye text-primary mr-1"></i>View Detail</a>
-                <a href="" class="btn btn-sm text-dark p-0"><i
-                        class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</a>
+                <a class="btn btn-sm text-dark p-0"
+                   onclick="like_unlike_products({{ product.id }}, this)"><i
+                        class="{% if product.id in like %}fas{% else %}far{% endif %} fa-heart text-primary mr-1"></i>
+                    {% if product.id in like %}Unlike{% else %}Like{% endif %}</a>
             </div>
         </div>
     </div>
@@ -26,4 +28,4 @@
         <h3 class="mt-5 mb-5 text-center">No product was found.</h3>
     </div>
 {% endfor %}
-{% include 'shop/frames/product_paginator.html' %}
+{% include 'shop/frames/paginator.html' %}

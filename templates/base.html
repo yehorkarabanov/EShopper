@@ -80,9 +80,9 @@
             </form>
         </div>
         <div class="col-lg-3 col-6 text-right">
-            <a href="" class="btn border">
+            <a href="{% url 'like:like_detail' %}" class="btn border">
                 <i class="fas fa-heart text-primary"></i>
-                <span class="badge">0</span>
+                <span class="badge">{{ like|length }}</span>
             </a>
             <a href="" class="btn border">
                 <i class="fas fa-shopping-cart text-primary"></i>
@@ -279,6 +279,53 @@
 <script src="{% static 'js/main.js' %}"></script>
 <script>
     const csrftoken = Cookies.get('csrftoken');
+
+    function like_unlike_products(product_id, element, text_primary=true) {
+        let buttonText = element.textContent.trim();
+
+        if (buttonText === 'Like') {
+            $.ajax({
+                method: 'POST',
+                url: '{% url 'like:like_add' %}',
+                headers: {'X-CSRFToken': csrftoken},
+                data: {
+                    'product_id': product_id,
+                },
+                type: 'text',
+                success: function (data) {
+                    let a_html = '<i class="fas fa-heart ';
+                        if(text_primary){
+                            a_html += 'text-primary';
+                        }
+                        a_html += ' mr-1"></i> Unlike';
+                        element.innerHTML = a_html;
+                }
+            });
+        }
+        if (buttonText === 'Unlike') {
+            $.ajax({
+                method: 'POST',
+                url: '{% url 'like:like_delete' %}',
+                headers: {'X-CSRFToken': csrftoken},
+                data: {
+                    'product_id': product_id,
+                },
+                type: 'text',
+                success: function (data) {
+                    if (data === 'success') {
+                        let a_html = '<i class="far fa-heart ';
+                        if(text_primary){
+                            a_html += 'text-primary';
+                        }
+                        a_html += ' mr-1"></i> Like';
+                        element.innerHTML = a_html;
+                    }
+                }
+            });
+        }
+
+        return false;
+    }
 </script>
 {% block script %}
 {% endblock %}

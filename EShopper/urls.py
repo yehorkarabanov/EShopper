@@ -21,6 +21,7 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('like/', include('like.urls', namespace='like')),
     path('', include('shop.urls')),
 ]
 
