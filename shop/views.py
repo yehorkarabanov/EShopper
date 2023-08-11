@@ -4,6 +4,7 @@ from django.views.generic import ListView, DetailView
 from django.db.models import Q, Count
 from django.template.loader import render_to_string
 from utils.ajax import is_ajax
+from like.like import Like
 
 
 def home(request):
@@ -18,7 +19,7 @@ class ProductsListView(ListView):
     model = Product
     template_name = 'shop/list.html'
     queryset = Product.objects.all()
-    paginate_by = 1
+    paginate_by = 9
 
     def get_queryset(self):
         category_slug = self.kwargs.get('category_slug')
@@ -76,7 +77,9 @@ class ProductsListView(ListView):
 
     def render_to_response(self, context, **response_kwargs):
         if is_ajax(self.request):
-            return HttpResponse(render_to_string('shop/frames/product_list_frame.html', context))
+            like = Like(self.request)
+            context.update({'like': like})
+            return HttpResponse(render_to_string('shop/frames/product_list.html', context))
         return super().render_to_response(context, **response_kwargs)
 
 

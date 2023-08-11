@@ -1,0 +1,68 @@
+{% for product in page_obj %}
+    <div class="col-lg-3 col-md-6 col-sm-12 pb-1 product-list-display">
+        <div class="card product-item border-0 mb-4">
+            <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+                <img class="img-fluid w-100" src="{{ product.image.url }}" alt="">
+            </div>
+            <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
+                <h6 class="text-truncate mb-3">{{ product.name }}</h6>
+                <div class="d-flex justify-content-center">
+                    <h6>${{ product.price }}</h6>
+                    <h6 class="text-muted ml-2">
+                        {#TODO: do discount#}
+                        <del>${{ product.price }}</del>
+                    </h6>
+                </div>
+            </div>
+            <div class="card-footer d-flex justify-content-between bg-light border">
+                <a href="{{ product.get_absolute_url }}" class="btn btn-sm text-dark p-0"><i
+                        class="fas fa-eye text-primary mr-1"></i>View
+                    Detail</a>
+                <a class="btn btn-sm text-dark p-0"
+                   onclick="like_unlike_products({{ product.id }}, this)"><i
+                        class="{% if product.id in like %}fas{% else %}far{% endif %} fa-heart text-primary mr-1"></i>
+                    {% if product.id in like %}Unlike{% else %}Like{% endif %}</a>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+{% load paginator_tags %}
+{% get_proper_elided_page_range paginator page_obj.number as page_range %}
+{% if is_paginated %}
+    <div class="col-12 pb-1" id="product_paginator">
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center mb-3">
+                <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+                    <a class="page-link" aria-label="Previous"
+                            {% if page_obj.has_previous %}
+                       onclick="addGETParams(['page={{ page_obj.previous_page_number }}'])"
+                            {% endif %}>
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                </li>
+
+                {% for page in page_range %}
+                    {% if page == paginator.ELLIPSIS %}
+                        <li class="page-item disabled"><a
+                                class="page-link">{{ paginator.ELLIPSIS }}</a></li>
+                    {% else %}
+                        <li class="page-item {% if page_obj.number == page %}active{% endif %}"><a
+                                class="page-link"
+                                onclick="addGETParams(['page={{ page }}'])">{{ page }}</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+                    <a class="page-link" aria-label="Next"
+                            {% if page_obj.has_next %}
+                       onclick="addGETParams(['page={{ page_obj.next_page_number }}'])"
+                            {% endif %}>
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+{% endif %}

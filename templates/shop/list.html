@@ -125,7 +125,7 @@
 
                     <div id="product-list-waypoint" style="display: none"></div>
 
-                    {% include 'shop/frames/product_list_frame.html' %}
+                    {% include 'shop/frames/product_list.html' %}
 
                 </div>
             </div>
@@ -162,7 +162,6 @@
                 url: url.href,
                 type: 'html',
                 success: function (data) {
-                    console.log(data);
                     $('#product_paginator').empty();
                     $('.product-list-display').empty();
                     $(data).insertAfter("#product-list-waypoint");

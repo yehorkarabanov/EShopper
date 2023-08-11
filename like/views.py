@@ -3,14 +3,31 @@ from django.views import View
 from shop.models import Product, Category
 from .like import Like
 from utils.ajax import is_ajax
+from django.core.paginator import Paginator
+from django.template.loader import render_to_string
 
 
 class LikeActionsView(View):
     def get(self, request):
+        like = Like(request)
+        products = Product.objects.filter(id__in=like.like)
+        items_per_page = 8
+        paginator = Paginator(products, items_per_page)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
         if is_ajax(request):
-            pass
+            return HttpResponse(render_to_string('like/frames/like_list.html', {
+                'page_obj': page_obj,
+                'paginator': paginator,
+                'is_paginated': paginator.num_pages > 1,
+                'like': like,
+            }))
         categories = Category.objects.all()
-        return render(request, 'like/like_detail.html')
+        return render(request, 'like/like_detail.html', {
+            'page_obj': page_obj,
+            'paginator': paginator,
+            'is_paginated': paginator.num_pages > 1,
+        })
 
     def post(self, request, action):
         product_id = request.POST.get('product_id')
