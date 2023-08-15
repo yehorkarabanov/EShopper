@@ -22,6 +22,7 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('like/', include('like.urls', namespace='like')),
+    path('cart/', include('cart.urls', namespace='cart')),
     path('', include('shop.urls')),
 ]
 

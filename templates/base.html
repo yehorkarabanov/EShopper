@@ -84,9 +84,9 @@
                 <i class="fas fa-heart text-primary"></i>
                 <span class="badge" id="like_count">{{ like|length }}</span>
             </a>
-            <a href="" class="btn border">
+            <a href="{% url 'cart:cart_detail' %}" class="btn border">
                 <i class="fas fa-shopping-cart text-primary"></i>
-                <span class="badge">0</span>
+                <span class="badge" id="cart_count">{{ cart|length }}</span>
             </a>
         </div>
     </div>

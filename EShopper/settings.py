@@ -38,6 +38,7 @@ INSTALLED_APPS = [
 
     'shop.apps.ShopConfig',
     'like.apps.LikeConfig',
+    'cart.apps.CartConfig',
 ]
 
 MIDDLEWARE = [
@@ -55,8 +56,7 @@ ROOT_URLCONF = 'EShopper.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
-        ,
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -65,6 +65,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'like.context_processors.like',
+                'cart.context_processors.cart',
             ],
         },
     },
@@ -126,3 +127,4 @@ MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 LIKE_SESSION_ID = 'like'
+CART_SESSION_ID = 'cart'

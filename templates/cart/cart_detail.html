@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <!-- Page Header Start -->
+    <div class="container-fluid bg-secondary mb-5">
+        <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
+            <h1 class="font-weight-semi-bold text-uppercase mb-3">Shopping Cart</h1>
+            <div class="d-inline-flex">
+                <p class="m-0"><a href="">Home</a></p>
+                <p class="m-0 px-2">-</p>
+                <p class="m-0">Shopping Cart</p>
+            </div>
+        </div>
+    </div>
+    <!-- Page Header End -->
+
+
+    <!-- Cart Start -->
+    <div class="container-fluid pt-5">
+        <div class="row px-xl-5">
+            <div class="col-lg-8 table-responsive mb-5">
+                <table class="table table-bordered text-center mb-0">
+                    <thead class="bg-secondary text-dark">
+                    <tr>
+                        <th>Products</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th>Remove</th>
+                    </tr>
+                    </thead>
+                    <tbody class="align-middle">
+                    {% for product in cart %}
+                        <tr>
+                            <td class="align-middle"><img src="{{ product.image.url }}" alt="" style="width: 50px;">
+                                {{ product.product.name }} ({{ product.size }}-{{ product.color }})
+                            </td>
+                            <td class="align-middle product-price">${{ product.price }}</td>
+                            <td class="align-middle">
+                                <div class="input-group quantity mx-auto" style="width: 100px;">
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-sm btn-primary btn-minus"
+                                                onclick="this.blur(); updateQuantityAndPrice(this,{{ product.product.id }}, '{{ product.color }}','{{ product.size }}', false)">
+                                            <i class="fa fa-minus"></i>
+                                        </button>
+                                    </div>
+                                    <input type="text"
+                                           class="form-control form-control-sm bg-secondary text-center product-quantity"
+                                           value="{{ product.quantity }}">
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-sm btn-primary btn-plus"
+                                                onclick="this.blur(); updateQuantityAndPrice(this,{{ product.product.id }}, '{{ product.color }}','{{ product.size }}', true)">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="align-middle product-total-price">${{ product.total_price }}</td>
+                            <td class="align-middle">
+                                <button class="btn btn-sm btn-primary"
+                                        onclick="this.blur();removeFromCart(this, {{ product.product.id }}, '{{ product.color }}','{{ product.size }}');">
+                                    <i class="fa fa-times"></i></button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="col-lg-4">
+                <form class="mb-5" action="">
+                    <div class="input-group">
+                        <input type="text" class="form-control p-4" placeholder="Coupon Code">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary">Apply Coupon</button>
+                        </div>
+                    </div>
+                </form>
+                <div class="card border-secondary mb-5">
+                    <div class="card-header bg-secondary border-0">
+                        <h4 class="font-weight-semi-bold m-0">Cart Summary</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-3 pt-1">
+                            <h6 class="font-weight-medium">Subtotal</h6>
+                            <h6 class="font-weight-medium" id="total_price">${{ cart.get_total_price }}</h6>
+                        </div>
+                        {#TODO:do price for shipping                     #}
+                        <div class="d-flex justify-content-between">
+                            <h6 class="font-weight-medium">Shipping</h6>
+                            <h6 class="font-weight-medium" id="shipping_price">$0</h6>
+                        </div>
+                    </div>
+                    <div class="card-footer border-secondary bg-transparent">
+                        <div class="d-flex justify-content-between mt-2">
+                            <h5 class="font-weight-bold">Total</h5>
+                            <h5 class="font-weight-bold" id="total_price_with_shipping">${{ cart.get_total_price }}</h5>
+                        </div>
+                        <button class="btn btn-block btn-primary my-3 py-3">Proceed To Checkout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Cart End -->
+{% endblock %}
+
+{% block script %}
+    <script>
+        function removeFromCart(button, product_id, color, size) {
+            $.ajax({
+                url: '{% url 'cart:cart_delete'%}',
+                method: 'POST',
+                data: {
+                    'color': color,
+                    'size': size,
+                    'product_id': product_id
+                },
+                headers: {'X-CSRFToken': csrftoken},
+                success: function (data) {
+                    if (data === 'success') {
+                        button.parentNode.parentNode.remove();
+                        updateSum()
+                    }
+                }
+            });
+        }
+
+        function updateSum() {
+            let total_price = 0;
+            $('.product-total-price').each(function () {
+                let priceText = $(this).text();
+                let price = parseFloat(priceText.replace('$', ''));
+                if (!isNaN(price)) {
+                    total_price += price;
+                }
+            });
+            $('#total_price').text('$' + total_price.toFixed(2));
+            let shipping_price = parseFloat($('#shipping_price').text().replace('$', ''))
+            $('#total_price_with_shipping').text('$' + (total_price + shipping_price).toFixed(2));
+        }
+
+        function updateQuantityAndPrice(button, product_id, color, size, plus) {
+            let element = button.parentNode.parentNode;
+            let quantity = parseInt(element.querySelector('.product-quantity').value);
+            if (plus) {
+                quantity += 1;
+            } else {
+                quantity -= 1;
+            }
+            if (quantity === 0) {
+                removeFromCart(element, product_id, color, size);
+                updateSum();
+                return;
+            }
+            element = element.parentNode.parentNode;
+            $.ajax({
+                url: '{% url 'cart:cart_add'%}',
+                method: 'POST',
+                data: {
+                    'color': color,
+                    'size': size,
+                    'product_id': product_id,
+                    'quantity': quantity,
+                },
+                headers: {'X-CSRFToken': csrftoken},
+                success: function (data) {
+                    if (data === 'success') {
+                        console.log(element)
+                        let price = parseFloat(element.querySelector('.product-price').textContent.replace('$', ''));
+                        element.querySelector('.product-total-price').textContent = '$' + (price * quantity).toFixed(2);
+                        updateSum();
+                        if (plus) {
+                            $('#cart_count').text(parseInt($('#cart_count').text()) + 1);
+                        } else {
+                            $('#cart_count').text(parseInt($('#cart_count').text()) - 1);
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+{% endblock %}

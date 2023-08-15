@@ -42,7 +42,7 @@
             </div>
 
             <div class="col-lg-7 pb-5">
-                <h3 class="font-weight-semi-bold">Colorful Stylish Shirt</h3>
+                <h3 class="font-weight-semi-bold">{{ product.name }}</h3>
                 <div class="d-flex mb-3">
                     <div class="text-primary mr-2">
                         <small class="fas fa-star"></small>
@@ -53,17 +53,15 @@
                     </div>
                     <small class="pt-1">(50 Reviews)</small>
                 </div>
-                <h3 class="font-weight-semi-bold mb-4">$150.00</h3>
-                <p class="mb-4">Volup erat ipsum diam elitr rebum et dolor. Est nonumy elitr erat diam stet sit clita
-                    ea. Sanc invidunt ipsum et, labore clita lorem magna lorem ut. Erat lorem duo dolor no sea nonumy.
-                    Accus labore stet, est lorem sit diam sea et justo, amet at lorem et eirmod ipsum diam et rebum kasd
-                    rebum.</p>
+                <h3 class="font-weight-semi-bold mb-4">${{ product.price }}</h3>
+                <p class="mb-4">{{ product.description }}</p>
                 <div class="d-flex mb-3">
                     <p class="text-dark font-weight-medium mb-0 mr-3">Sizes:</p>
-                    <form>
+                    <form id="size_form">
                         {% for size in product.size.all %}
                             <div class="custom-control custom-radio custom-control-inline">
-                                <input type="radio" class="custom-control-input" id="size-{{ size.size }}" name="size">
+                                <input type="radio" class="custom-control-input" id="size-{{ size.size }}" name="size"
+                                       value="{{ size.size }}">
                                 <label class="custom-control-label" for="size-{{ size.size }}">{{ size.size }}</label>
                             </div>
                         {% endfor %}
@@ -71,11 +69,11 @@
                 </div>
                 <div class="d-flex mb-4">
                     <p class="text-dark font-weight-medium mb-0 mr-3">Colors:</p>
-                    <form>
+                    <form id="color_form">
                         {% for color in product.color.all %}
                             <div class="custom-control custom-radio custom-control-inline">
                                 <input type="radio" class="custom-control-input" id="color-{{ color.color }}"
-                                       name="color">
+                                       name="color" value="{{ color.color }}">
                                 <label class="custom-control-label"
                                        for="color-{{ color.color }}">{{ color.color }}</label>
                             </div>
@@ -89,14 +87,16 @@
                                 <i class="fa fa-minus"></i>
                             </button>
                         </div>
-                        <input type="text" class="form-control bg-secondary text-center" value="1">
+                        <input type="text" class="form-control bg-secondary text-center" value="1"
+                               id="product_quantity">
                         <div class="input-group-btn">
                             <button class="btn btn-primary btn-plus">
                                 <i class="fa fa-plus"></i>
                             </button>
                         </div>
                     </div>
-                    <button class="btn btn-primary px-3 mr-3"><i class="fa fa-shopping-cart mr-1"></i> Add To Cart
+                    <button class="btn btn-primary px-3 mr-3" onclick="addToCart(this);"><i
+                            class="fa fa-shopping-cart mr-1"></i> Add To Cart
                     </button>
                     <button class="btn btn-primary px-3" type="submit"
                             onclick="this.blur();like_unlike_products({{ product.id }}, this, text_primary=false)">
@@ -133,27 +133,12 @@
                 <div class="tab-content">
                     <div class="tab-pane fade show active" id="tab-pane-1">
                         <h4 class="mb-3">Product Description</h4>
-                        <p>Eos no lorem eirmod diam diam, eos elitr et gubergren diam sea. Consetetur vero aliquyam
-                            invidunt duo dolores et duo sit. Vero diam ea vero et dolore rebum, dolor rebum eirmod
-                            consetetur invidunt sed sed et, lorem duo et eos elitr, sadipscing kasd ipsum rebum diam.
-                            Dolore diam stet rebum sed tempor kasd eirmod. Takimata kasd ipsum accusam sadipscing, eos
-                            dolores sit no ut diam consetetur duo justo est, sit sanctus diam tempor aliquyam eirmod
-                            nonumy rebum dolor accusam, ipsum kasd eos consetetur at sit rebum, diam kasd invidunt
-                            tempor lorem, ipsum lorem elitr sanctus eirmod takimata dolor ea invidunt.</p>
-                        <p>Dolore magna est eirmod sanctus dolor, amet diam et eirmod et ipsum. Amet dolore tempor
-                            consetetur sed lorem dolor sit lorem tempor. Gubergren amet amet labore sadipscing clita
-                            clita diam clita. Sea amet et sed ipsum lorem elitr et, amet et labore voluptua sit rebum.
-                            Ea erat sed et diam takimata sed justo. Magna takimata justo et amet magna et.</p>
+                        <p>{{ product.description }}</p>
+                        <p>{{ product.description }}</p>
                     </div>
                     <div class="tab-pane fade" id="tab-pane-2">
                         <h4 class="mb-3">Additional Information</h4>
-                        <p>Eos no lorem eirmod diam diam, eos elitr et gubergren diam sea. Consetetur vero aliquyam
-                            invidunt duo dolores et duo sit. Vero diam ea vero et dolore rebum, dolor rebum eirmod
-                            consetetur invidunt sed sed et, lorem duo et eos elitr, sadipscing kasd ipsum rebum diam.
-                            Dolore diam stet rebum sed tempor kasd eirmod. Takimata kasd ipsum accusam sadipscing, eos
-                            dolores sit no ut diam consetetur duo justo est, sit sanctus diam tempor aliquyam eirmod
-                            nonumy rebum dolor accusam, ipsum kasd eos consetetur at sit rebum, diam kasd invidunt
-                            tempor lorem, ipsum lorem elitr sanctus eirmod takimata dolor ea invidunt.</p>
+                        <p>{{ product.description }}</p>
                         <div class="row">
                             <div class="col-md-6">
                                 <ul class="list-group list-group-flush">
@@ -288,4 +273,37 @@
         </div>
     </div>
     <!-- Products End -->
+{% endblock %}
+
+{% block script %}
+    <script>
+        let product_id = {{ product.id }};
+        let color_form = document.getElementById('color_form');
+        let size_form = document.getElementById('size_form');
+
+        function addToCart(button) {
+            let color = color_form.querySelector('input[name="color"]:checked').value;
+            let size = size_form.querySelector('input[name="size"]:checked').value;
+            let quantity = document.getElementById('product_quantity').value;
+            if (color == null || size == null || quantity == 0){
+                return;
+            }
+                $.ajax({
+                    method: 'POST',
+                    url: '{% url 'cart:cart_add' %}',
+                    data: {
+                        'color': color,
+                        'size': size,
+                        'quantity': quantity,
+                        'product_id':{{ product.id }}
+                    },
+                    headers: {'X-CSRFToken': csrftoken},
+                    success: function (data) {
+                        window.location.href = '{% url 'cart:cart_detail' %}';
+                    }
+                });
+
+        }
+
+    </script>
 {% endblock %}
