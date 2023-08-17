@@ -11,7 +11,7 @@ def home(request):
     products = Product.objects.all().order_by('-updated')
     categories = Category.objects.all()
     categories_with_images = [category for category in categories if category.image]
-    return render(request, 'shop/home.html', {'categories': categories, 'products': products, 'page': 'home',
+    return render(request, 'shop/home.html', {'products': products, 'page': 'home',
                                               'category_img': categories_with_images})
 
 
@@ -58,9 +58,6 @@ class ProductsListView(ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        categories = Category.objects.all()
-        context['categories'] = categories
-
         category_slug = self.kwargs.get('category_slug')
         if category_slug:
             colors = ProductColor.objects.annotate(
@@ -91,6 +88,5 @@ class ProductDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['categories'] = Category.objects.all()
         context['recommended_products'] = Product.objects.all()[:5]
         return context

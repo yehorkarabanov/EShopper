@@ -8,8 +8,7 @@ from django.template.loader import render_to_string
 
 class CartActionsView(View):
     def get(self, request):
-        categories = Category.objects.all()
-        return render(request, 'cart/cart_detail.html', {'categories': categories})
+        return render(request, 'cart/cart_detail.html')
 
     def post(self, request, action):
         product_id = request.POST.get('product_id')

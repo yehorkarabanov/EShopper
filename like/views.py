@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, HttpResponse
 from django.views import View
-from shop.models import Product, Category
+from shop.models import Product
 from .like import Like
 from utils.ajax import is_ajax
 from django.core.paginator import Paginator
@@ -22,7 +22,6 @@ class LikeActionsView(View):
                 'is_paginated': paginator.num_pages > 1,
                 'like': like,
             }))
-        categories = Category.objects.all()
         return render(request, 'like/like_detail.html', {
             'page_obj': page_obj,
             'paginator': paginator,
