@@ -133,13 +133,16 @@
                     </div>
                     <div class="navbar-nav ml-auto py-0">
                         {% if request.user.is_authenticated %}
-                            <a href="{% url 'account:detail' %}"
+                            <a href="{% url 'account:detail' %}" id="user_a"
                                class="nav-item nav-link {% if 'account/' in request.path %}active{% endif %}">{{ request.user.username }}</a>
                         {% else %}
-                            <a href=""
+                            <a href="{% url 'account:detail' %}" id="user_a"
+                               class="nav-item nav-link text-hide {% if 'account/' in request.path %}active{% endif %}">123</a>
+                            <a href="" id="login_a"
                                class="nav-item nav-link {% if 'login/' in request.path %}active{% endif %}"
                                data-toggle="modal" data-target="#loginModal">Login</a>
-                            <a href="" class="nav-item nav-link {% if 'register/' in request.path %}active{% endif %}"
+                            <a href="" id="register_a"
+                               class="nav-item nav-link {% if 'register/' in request.path %}active{% endif %}"
                                data-toggle="modal" data-target="#registerModal">Register</a>
                         {% endif %}
                     </div>
@@ -471,8 +474,12 @@
             },
             type: 'text',
             success: function (data) {
-                if (data === 'success') {
+                if (data['result'] === 'success') {
                     $('#loginModal').modal('hide');
+                    $('#login_a').hide();
+                    $('#register_a').hide();
+                    $('#user_a').removeClass('text-hide');
+                    $('#user_a').text(data['username']);
                 } else {
                     login_warning.removeClass('text-hide');
                 }

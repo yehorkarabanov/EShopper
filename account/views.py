@@ -4,6 +4,7 @@ from django.views.generic import DetailView, View
 from .models import UserAccount
 from django.contrib.auth import logout, authenticate, login
 from django.shortcuts import redirect, HttpResponse
+from django.http import JsonResponse
 
 
 @method_decorator(login_required, name='dispatch')
@@ -30,5 +31,5 @@ class LoginView(View):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return HttpResponse('success')
-        return HttpResponse('failed')
+            return JsonResponse({'result': 'success', 'username': user.username})
+        return JsonResponse({'result': 'failed'})
