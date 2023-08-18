@@ -139,3 +139,5 @@ CART_SESSION_ID = 'cart'
 
 LOGIN_REDIRECT_URL = 'shop:home'
 LOGOUT_REDIRECT_URL = 'shop:home'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

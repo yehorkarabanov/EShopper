@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, View
 from .models import UserAccount
+from order.models import Order
 from django.contrib.auth import logout, authenticate, login
 from django.shortcuts import redirect, HttpResponse
 from django.http import JsonResponse
@@ -16,6 +17,12 @@ class AccountDetailView(DetailView):
 
     def get_object(self, queryset=None):
         return self.request.user.useraccount
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        orders = Order.objects.filter(email=self.request.user.email)
+        context['orders'] = orders
+        return context
 
 
 @method_decorator(login_required, name='dispatch')
