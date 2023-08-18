@@ -5,6 +5,7 @@ from .models import UserAccount
 from django.contrib.auth import logout, authenticate, login
 from django.shortcuts import redirect, HttpResponse
 from django.http import JsonResponse
+from .forms import ExtendedUserCreationForm
 
 
 @method_decorator(login_required, name='dispatch')
@@ -31,5 +32,16 @@ class LoginView(View):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return JsonResponse({'result': 'success', 'username': user.username})
-        return JsonResponse({'result': 'failed'})
+            return JsonResponse({'status': 'success', 'username': user.username})
+        return JsonResponse({'status': 'failed'})
+
+
+class UserRegisterView(View):
+    def post(self, request):
+        form = ExtendedUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            account = UserAccount.objects.create(user=user)
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            return JsonResponse({'status': 'success', 'username': user.username})
+        return JsonResponse({'status': 'failed', 'errors': form.errors})

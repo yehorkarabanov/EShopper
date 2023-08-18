@@ -137,5 +137,5 @@ MEDIA_ROOT = BASE_DIR / 'media'
 LIKE_SESSION_ID = 'like'
 CART_SESSION_ID = 'cart'
 
-LOGIN_REDIRECT_URL = 'home'
-LOGOUT_REDIRECT_URL = 'home'
+LOGIN_REDIRECT_URL = 'shop:home'
+LOGOUT_REDIRECT_URL = 'shop:home'

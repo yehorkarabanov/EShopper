@@ -123,7 +123,6 @@
                 </button>
                 <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                     <div class="navbar-nav mr-auto py-0">
-                        {#TODO: redo links#}
                         <a href="{% url 'shop:home' %}"
                            class="nav-item nav-link {% if page == 'home' %}active{% endif %}">Home</a>
                         <a href="{% url 'shop:products_list' %}"
@@ -225,6 +224,7 @@
                             <div class="col-md-6">
                                 <a onclick="changeModals();">Don't have account?</a>
                             </div>
+                            {# TODO:do forgot password                           #}
                             <div class="col-md-6">
                                 <a>Forgot your password?</a>
                             </div>
@@ -242,42 +242,56 @@
 
 <div class="modal fade" id="registerModal">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Register</h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="login-form">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label>E-mail / Username</label>
-                            <input class="form-control" type="text" placeholder="E-mail / Username">
+        <form id="register_form">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Register</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="login-form">
+                        <div class="col-md-12 mb-3">
+                            <p class="text-danger" id="register_warning"></p>
                         </div>
-                        <div class="col-md-6">
-                            <label>Password</label>
-                            <input class="form-control" type="text" placeholder="Password">
-                        </div>
-                        <div class="col-md-12 mt-3 mb-3">
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="newaccount">
-                                <label class="custom-control-label" for="newaccount">Keep me signed in</label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>Username</label>
+                                <input class="form-control" type="text" placeholder="Username"
+                                       id="register_username" required>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <a onclick="changeModals();">Don't have account?</a>
-                        </div>
-                        <div class="col-md-6">
-                            <a>Forgot your password?</a>
+                            <div class="col-md-6">
+                                <label>E-mail</label>
+                                <input class="form-control" type="email" placeholder="E-mail" id="register_email"
+                                       required>
+                            </div>
+                            <div class="col-md-6 mt-3">
+                                <label>Password</label>
+                                <input class="form-control" type="password" placeholder="Password"
+                                       id="register_password1" required>
+                            </div>
+                            <div class="col-md-6 mt-3">
+                                <label>Repeat password</label>
+                                <input class="form-control" type="password" placeholder="Repeat password"
+                                       id="register_password2" required>
+                            </div>
+                            <div class="col-md-12 mt-3 mb-3">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="newaccount">
+                                    <label class="custom-control-label" for="newaccount">Keep me signed in</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <a onclick="changeModals();">Already have account?</a>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" onclick="this.blur();">Register</button>
+                </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Login</button>
-            </div>
-        </div>
+        </form>
     </div>
 </div>
 
@@ -474,7 +488,7 @@
             },
             type: 'text',
             success: function (data) {
-                if (data['result'] === 'success') {
+                if (data['status'] === 'success') {
                     $('#loginModal').modal('hide');
                     $('#login_a').hide();
                     $('#register_a').hide();
@@ -482,6 +496,49 @@
                     $('#user_a').text(data['username']);
                 } else {
                     login_warning.removeClass('text-hide');
+                }
+            }
+        });
+    });
+
+    document.getElementById('register_form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const username = $('#register_username').val();
+        const email = $('#register_email').val();
+        const password1 = $('#register_password1').val();
+        const password2 = $('#register_password2').val();
+        const register_warning = $('#register_warning');
+        $.ajax({
+            method: 'POST',
+            url: '{% url 'account:register' %}',
+            headers: {'X-CSRFToken': csrftoken},
+            data: {
+                'username': username,
+                'email': email,
+                'password1': password1,
+                'password2': password2,
+            },
+            type: 'text',
+            success: function (data) {
+                if(data['status']==='success'){
+                    $('#registerModal').modal('hide');
+                    $('#login_a').hide();
+                    $('#register_a').hide();
+                    $('#user_a').removeClass('text-hide');
+                    $('#user_a').text(data['username']);
+                }else{
+                    let errorHtml = '';
+                    let errors = data.errors;
+                    for (let field in errors) {
+                        if (errors.hasOwnProperty(field)) {
+                            let errorMessages = errors[field];
+                            for (let i = 0; i < errorMessages.length; i++) {
+                                let errorMessage = errorMessages[i];
+                                errorHtml += '<p class="text-danger">' + errorMessage + '</p>';
+                            }
+                        }
+                    }
+                    register_warning.html(errorHtml);
                 }
             }
         });
