@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'like.apps.LikeConfig',
     'cart.apps.CartConfig',
     'order.apps.OrderConfig',
+    'account.apps.AccountConfig',
 ]
 
 MIDDLEWARE = [
@@ -130,3 +131,6 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 LIKE_SESSION_ID = 'like'
 CART_SESSION_ID = 'cart'
+
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'

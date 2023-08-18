@@ -1,5 +1,6 @@
 from django.db import models
 from shop.models import Product, ProductSize, ProductColor
+from account.models import UserAccount
 
 
 class Order(models.Model):
@@ -15,6 +16,7 @@ class Order(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     paid = models.BooleanField(default=False)
+    user = models.ForeignKey(UserAccount, related_name='orders', blank=True, null=True, on_delete=models.SET_NULL)
 
     class Meta:
         ordering = ['-created']
