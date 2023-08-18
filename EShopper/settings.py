@@ -76,6 +76,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'EShopper.wsgi.application'
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'account.authenticate.EmailAuthBackend',
+]
+
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 

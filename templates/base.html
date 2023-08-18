@@ -137,8 +137,10 @@
                                class="nav-item nav-link {% if 'account/' in request.path %}active{% endif %}">{{ request.user.username }}</a>
                         {% else %}
                             <a href=""
-                               class="nav-item nav-link {% if 'login/' in request.path %}active{% endif %}">Login</a>
-                            <a href="" class="nav-item nav-link {% if 'register/' in request.path %}active{% endif %}">Register</a>
+                               class="nav-item nav-link {% if 'login/' in request.path %}active{% endif %}"
+                               data-toggle="modal" data-target="#loginModal">Login</a>
+                            <a href="" class="nav-item nav-link {% if 'register/' in request.path %}active{% endif %}"
+                               data-toggle="modal" data-target="#registerModal">Register</a>
                         {% endif %}
                     </div>
                 </div>
@@ -185,6 +187,96 @@
     </div>
 </div>
 <!-- Navbar End -->
+
+<div class="modal fade" id="loginModal">
+    <div class="modal-dialog modal-lg">
+        <form id="login_form">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Login</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="login-form">
+                        <div class="col-md-12 mb-3">
+                            <p class="text-danger text-hide" id="login_warning"><i class="fas fa-info-circle mr-1"></i>No
+                                account with this login and password</p>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>E-mail / Username</label>
+                                <input class="form-control" type="text" placeholder="E-mail / Username"
+                                       id="login_username" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Password</label>
+                                <input class="form-control" type="password" placeholder="Password" id="login_password"
+                                       required>
+                            </div>
+                            <div class="col-md-12 mt-3 mb-3">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="newaccount">
+                                    <label class="custom-control-label" for="newaccount">Keep me signed in</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <a onclick="changeModals();">Don't have account?</a>
+                            </div>
+                            <div class="col-md-6">
+                                <a>Forgot your password?</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" onclick="this.blur();">Login</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" id="registerModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Register</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="login-form">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>E-mail / Username</label>
+                            <input class="form-control" type="text" placeholder="E-mail / Username">
+                        </div>
+                        <div class="col-md-6">
+                            <label>Password</label>
+                            <input class="form-control" type="text" placeholder="Password">
+                        </div>
+                        <div class="col-md-12 mt-3 mb-3">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="newaccount">
+                                <label class="custom-control-label" for="newaccount">Keep me signed in</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <a onclick="changeModals();">Don't have account?</a>
+                        </div>
+                        <div class="col-md-6">
+                            <a>Forgot your password?</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Login</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% block content %}{% endblock %}
 
@@ -347,6 +439,48 @@
 
         return false;
     }
+
+    function changeModals() {
+        const loginModal = $('#loginModal');
+        const registerModal = $('#registerModal');
+        if (loginModal.hasClass('show')) {
+            loginModal.modal('hide');
+            setTimeout(function () {
+                registerModal.modal('show');
+            }, 400);
+        } else {
+            registerModal.modal('hide');
+            setTimeout(function () {
+                loginModal.modal('show');
+            }, 400);
+        }
+    }
+
+    document.getElementById('login_form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const login_username = $('#login_username').val();
+        const login_password = $('#login_password').val();
+        const login_warning = $('#login_warning');
+        $.ajax({
+            method: 'POST',
+            url: '{% url 'account:login' %}',
+            headers: {'X-CSRFToken': csrftoken},
+            data: {
+                'username': login_username,
+                'password': login_password,
+            },
+            type: 'text',
+            success: function (data) {
+                if (data === 'success') {
+                    $('#loginModal').modal('hide');
+                } else {
+                    login_warning.removeClass('text-hide');
+                }
+            }
+        });
+    });
+
+
 </script>
 {% block script %}
 {% endblock %}
