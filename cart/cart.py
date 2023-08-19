@@ -1,7 +1,6 @@
 from decimal import Decimal
 from django.conf import settings
 from shop.models import Product
-from django.db.models import Q
 
 
 class Cart:

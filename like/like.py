@@ -7,7 +7,7 @@ class Like:
         self.session = request.session
         like = self.session.get(settings.LIKE_SESSION_ID)
         if not like:
-            like = self.session[settings.LIKE_SESSION_ID] = []
+            like = self.session[settings.LIKE_SESSION_ID] = [-1]
         self.like = like
 
     def add(self, product):
@@ -33,7 +33,7 @@ class Like:
             yield product
 
     def __len__(self):
-        return len(self.like)
+        return len(self.like) - 1
 
     def clear(self):
         del self.session[settings.LIKE_SESSION_ID]
