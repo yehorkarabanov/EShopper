@@ -41,53 +41,28 @@
                                         <th>Product</th>
                                         <th>Date</th>
                                         <th>Price</th>
-                                        <th>Status</th>
                                         <th>Paid</th>
+                                        <th>Detail</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     {% for order in orders %}
-                                    <tr>
-                                        <td>{{ order.id }}</td>
-                                        <td>Product Name</td>
-                                        <td>{{ order.created }}</td>
-                                        <td>${{ order.get_total_cost }}</td>
-                                        <td>{{ order.paid }}</td>
-                                        <td>
-                                            <button class="btn">View</button>
-                                        </td>
-                                    </tr>
+                                        <tr>
+                                            <td>{{ order.id }}</td>
+                                            <td>
+                                                {% for product in order.items.all %}
+                                                    <p>{{ product.product.name }}
+                                                        ({{ product.size }}-{{ product.color }}) {{ product.quantity }}</p>
+                                                {% endfor %}
+                                            </td>
+                                            <td>{{ order.created }}</td>
+                                            <td>${{ order.get_total_cost }}</td>
+                                            <td>{{ order.paid }}</td>
+                                            <td>
+                                                <button class="btn">View</button>
+                                            </td>
+                                        </tr>
                                     {% endfor %}
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Product Name</td>
-                                        <td>01 Jan 2020</td>
-                                        <td>$99</td>
-                                        <td>Approved</td>
-                                        <td>
-                                            <button class="btn">View</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td>Product Name</td>
-                                        <td>01 Jan 2020</td>
-                                        <td>$99</td>
-                                        <td>Approved</td>
-                                        <td>
-                                            <button class="btn">View</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>3</td>
-                                        <td>Product Name</td>
-                                        <td>01 Jan 2020</td>
-                                        <td>$99</td>
-                                        <td>Approved</td>
-                                        <td>
-                                            <button class="btn">View</button>
-                                        </td>
-                                    </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -121,46 +96,152 @@
                         </div>
                         <div class="tab-pane fade" id="account-tab" role="tabpanel" aria-labelledby="account-nav">
                             <h4>Account Details</h4>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <input class="form-control" type="text" placeholder="First Name">
+                            <form id="user_update_form">
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <p class="text-danger" id="change_user_warning"></p>
+                                    </div>
+                                    <div class="col-md-12 mb-3">
+                                        <label>Username</label>
+                                        <input class="form-control" type="text" placeholder="Username"
+                                               name="username"
+                                               {% if user.username %}value="{{ user.username }}"{% endif %}>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label>First Name</label>
+                                        <input class="form-control" type="text" placeholder="First Name"
+                                               name="first_name"
+                                               {% if user.first_name %}value="{{ user.first_name }}"{% endif %}>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label>Last Name</label>
+                                        <input class="form-control" type="text" placeholder="Last Name"
+                                               name="last_name"
+                                               {% if user.last_name %}value="{{ user.last_name }}"{% endif %}>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label>Mobile</label>
+                                        <input class="form-control" type="text" placeholder="Mobile"
+                                               name="phone_number"
+                                               {% if account.phone_number %}value="{{ account.phone_number }}"{% endif %}>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label>Email</label>
+                                        <input class="form-control" type="text" placeholder="Email"
+                                               name="email"
+                                               {% if user.email %}value="{{ user.email }}"{% endif %}>
+                                    </div>
+                                    <div class="col-md-12 mb-3">
+                                        <label>Address</label>
+                                        <input class="form-control" type="text" placeholder="Address"
+                                               name="address"
+                                               {% if account.address %}value="{{ account.address }}"{% endif %}>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <button class="btn btn-primary" type="submit">Update Account</button>
+                                        <br><br>
+                                    </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <input class="form-control" type="text" placeholder="Last Name">
-                                </div>
-                                <div class="col-md-6">
-                                    <input class="form-control" type="text" placeholder="Mobile">
-                                </div>
-                                <div class="col-md-6">
-                                    <input class="form-control" type="text" placeholder="Email">
-                                </div>
-                                <div class="col-md-12">
-                                    <input class="form-control" type="text" placeholder="Address">
-                                </div>
-                                <div class="col-md-12">
-                                    <button class="btn">Update Account</button>
-                                    <br><br>
-                                </div>
-                            </div>
+                            </form>
                             <h4>Password change</h4>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <input class="form-control" type="password" placeholder="Current Password">
+                            <form id="password_change_from">
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <p class="text-danger" id="change_password_warning"></p>
+                                    </div>
+                                    <div class="col-md-12 mb-3">
+                                        <input class="form-control" type="password" placeholder="Current Password"
+                                               name="old_password" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <input class="form-control" type="password" placeholder="New Password"
+                                               name="new_password1" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <input class="form-control" type="password" placeholder="Confirm Password"
+                                               name="new_password2" required>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <button class="btn btn-primary" type="submit">Save Changes</button>
+                                    </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <input class="form-control" type="text" placeholder="New Password">
-                                </div>
-                                <div class="col-md-6">
-                                    <input class="form-control" type="text" placeholder="Confirm Password">
-                                </div>
-                                <div class="col-md-12">
-                                    <button class="btn">Save Changes</button>
-                                </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        document.getElementById('password_change_from').addEventListener('submit', function (event) {
+            event.preventDefault();
+            let change_password_warning = $('#change_password_warning');
+            $.ajax({
+                method: 'POST',
+                url: '{% url 'account:password_change' %}',
+                headers: {'X-CSRFToken': csrftoken},
+                data: $(this).serialize(),
+                type: 'text',
+                success: function (data) {
+                    if (data['status'] === 'success') {
+                        change_password_warning.html('<p class="text-success">Your password was changed successfully</p>');
+                    } else {
+                        let errorHtml = '';
+                        let errors = data.errors;
+                        for (let field in errors) {
+                            if (errors.hasOwnProperty(field)) {
+                                let errorMessages = errors[field];
+                                for (let i = 0; i < errorMessages.length; i++) {
+                                    let errorMessage = errorMessages[i];
+                                    errorHtml += '<p class="text-danger">' + errorMessage + '</p>';
+                                }
+                            }
+                        }
+                        change_password_warning.html(errorHtml);
+                    }
+                }
+            });
+        });
+        document.getElementById('user_update_form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            let change_user_warning = $('#change_user_warning');
+            let filteredArray = [];
+            $(this).serialize().split("&").forEach(function (item) {
+                let pair = item.split("=");
+                if (pair[1] !== "") {
+                    filteredArray.push(item);
+                }
+            });
+            let data = filteredArray.join("&");
+            $.ajax({
+                method: 'POST',
+                url: '{% url 'account:user_data_change' %}',
+                headers: {'X-CSRFToken': csrftoken},
+                data: data,
+                type: 'text',
+                success: function (data) {
+                    if (data['status'] === 'success') {
+                        change_user_warning.html('<p class="text-success">Your account was changed successfully</p>');
+                        $('#user_a').text(data['username']);
+                    } else {
+                        let errorHtml = '';
+                        let errors = data.errors;
+                        for (let field in errors) {
+                            if (errors.hasOwnProperty(field)) {
+                                let errorMessages = errors[field];
+                                for (let i = 0; i < errorMessages.length; i++) {
+                                    let errorMessage = errorMessages[i];
+                                    errorHtml += '<p class="text-danger">' + errorMessage + '</p>';
+                                }
+                            }
+                        }
+                        change_user_warning.html(errorHtml);
+                    }
+                }
+            });
+        });
+    </script>
 {% endblock %}
