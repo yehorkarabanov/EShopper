@@ -36,6 +36,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'rest_framework',
+
     'shop.apps.ShopConfig',
     'like.apps.LikeConfig',
     'cart.apps.CartConfig',
@@ -141,3 +143,9 @@ LOGIN_REDIRECT_URL = 'shop:home'
 LOGOUT_REDIRECT_URL = 'shop:home'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}

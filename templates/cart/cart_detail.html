@@ -153,6 +153,7 @@
             if (quantity === 0) {
                 removeFromCart(element, product_id, color, size);
                 updateSum();
+                $('#cart_count').text(0);
                 return;
             }
             element = element.parentNode.parentNode;
