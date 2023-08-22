@@ -15,15 +15,19 @@ class ProductPhotoSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ProductSizeSerializer(serializers.HyperlinkedModelSerializer):
+    count = serializers.IntegerField()
+
     class Meta:
         model = ProductSize
-        fields = ['size']
+        fields = ['size', 'count']
 
 
 class ProductColorSerializer(serializers.HyperlinkedModelSerializer):
+    count = serializers.IntegerField()
+
     class Meta:
         model = ProductColor
-        fields = ['color']
+        fields = ['color', 'count']
 
 
 class ProductSerializer(serializers.HyperlinkedModelSerializer):
